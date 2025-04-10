@@ -50,15 +50,37 @@ function ProfilePage() {
   };
 
   // Handle health condition toggles
-  const handleHealthConditionChange = (condition) => {
-    setFormData({
-      ...formData,
-      healthConditions: {
-        ...formData.healthConditions,
-        [condition]: !formData.healthConditions[condition]
-      }
-    });
-  };
+//   const handleHealthConditionChange = (condition) => {
+//     setFormData({
+//       ...formData,
+//       healthConditions: {
+//         ...formData.healthConditions,
+//         [condition]: !formData.healthConditions[condition]
+//       }
+//     });
+//   };
+    const handleHealthConditionChange = (condition) => {
+        // Create a copy of current health conditions
+        const updatedHealthConditions = {
+        ...formData.healthConditions
+        };
+        
+        // If selecting one blood pressure condition, ensure the other is unselected
+        if (condition === 'highBloodPressure' && !updatedHealthConditions[condition]) {
+        updatedHealthConditions.lowBloodPressure = false;
+        } else if (condition === 'lowBloodPressure' && !updatedHealthConditions[condition]) {
+        updatedHealthConditions.highBloodPressure = false;
+        }
+        
+        // Toggle the selected condition
+        updatedHealthConditions[condition] = !updatedHealthConditions[condition];
+        
+        setFormData({
+        ...formData,
+        healthConditions: updatedHealthConditions
+        });
+    };
+
 
   // Handle adding new allergy
   const handleAddAllergy = () => {
@@ -424,7 +446,7 @@ function ProfilePage() {
             </section>
             
             {/* Health Conditions */}
-            <section className="mb-8">
+            {/* <section className="mb-8">
               <h3 className="font-medium text-gray-700 mb-4 pb-2 border-b">Health Conditions</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {Object.entries(formData.healthConditions).map(([condition, active]) => (
@@ -441,6 +463,37 @@ function ProfilePage() {
                     </label>
                   </div>
                 ))}
+              </div>
+            </section> */}
+
+            {/* Health Conditions */}
+            <section className="mb-8">
+              <h3 className="font-medium text-gray-700 mb-4 pb-2 border-b">Health Conditions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {Object.entries(formData.healthConditions).map(([condition, active]) => (
+                  <div key={condition} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={condition}
+                      checked={active}
+                      onChange={() => handleHealthConditionChange(condition)}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      disabled={(condition === 'highBloodPressure' && formData.healthConditions.lowBloodPressure) || 
+                               (condition === 'lowBloodPressure' && formData.healthConditions.highBloodPressure)}
+                    />
+                    <label 
+                      htmlFor={condition} 
+                      className={`ml-2 ${((condition === 'highBloodPressure' && formData.healthConditions.lowBloodPressure) || 
+                                        (condition === 'lowBloodPressure' && formData.healthConditions.highBloodPressure)) 
+                                        ? 'text-gray-400' : 'text-gray-700'}`}
+                    >
+                      {condition.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 text-sm text-gray-500">
+                Note: High Blood Pressure and Low Blood Pressure cannot be selected at the same time.
               </div>
             </section>
             
