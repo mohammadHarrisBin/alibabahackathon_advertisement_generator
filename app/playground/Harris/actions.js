@@ -4,8 +4,8 @@ import OSS from 'ali-oss';
 import { v4 as uuidv4 } from 'uuid';
 
 // Configuration
-const base_url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1";
-const apiKey = "sk-f1863bae33d349d09bf1a6cc1f85c169";
+const base_url = process.env.BASE_URL;
+const apiKey = process.env.API_KEY;
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -148,10 +148,10 @@ export const connectionToMuhammadAli = async (sicknesses, imageUrl) => {
 
 // Configure the OSS client
 const client = new OSS({
-  region: "oss-ap-southeast-1", // Replace with your OSS region
-  accessKeyId: 'LTAI5t73fHKeEdmzohV6wbtt', // AccessKey ID from .env
-  accessKeySecret: 'ZYqVnAOaOZvd8qrFdtsDqSfHd2ANUv', // AccessKey Secret from .env
-  bucket: 'healbitesv1', // Replace with your bucket name
+  region: process.env.OSS_REGION, // Replace with your OSS region
+  accessKeyId: process.env.OSS_ACCESS_KEY_ID, // AccessKey ID from .env
+  accessKeySecret: process.env.OSS_ACCESS_SECRET_KEY, // AccessKey Secret from .env
+  bucket: process.env.BUCKET_NAME, // Replace with your bucket name
 });
 
 export async function uploadToOSS(formData) {
