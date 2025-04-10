@@ -1,5 +1,7 @@
 "use server";
 import OpenAI from "openai";
+import OSS from 'ali-oss';
+import { v4 as uuidv4 } from 'uuid';
 
 // Configuration
 const base_url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1";
@@ -91,7 +93,7 @@ const nutritionTool = {
 };
 
 // Main function to connect and analyze food image
-export const connectionToMuhammadAli = async (sicknesses) => {
+export const connectionToMuhammadAli = async (sicknesses, imageUrl) => {
   try {
     // Define the messages for the chat completion
     const messages = [
@@ -102,7 +104,7 @@ export const connectionToMuhammadAli = async (sicknesses) => {
           {
             type: "image_url",
             image_url: {
-              url: "https://media.istockphoto.com/id/526149515/photo/nasi-lemak-malaysian-cuisine.jpg?s=612x612&w=0&k=20&c=XiJE-q-zUMj8KLEmrDnEWHwVgaP-VPhYaOoWUgnR6UY=",
+              url: imageUrl,
             },
           },
         ],
@@ -132,9 +134,47 @@ export const connectionToMuhammadAli = async (sicknesses) => {
 
     // If no tool call was made, log the raw response
     console.log(JSON.stringify(response));
+    
     return JSON.stringify(response);
   } catch (error) {
     console.error("Error during analysis:", error);
     throw error;
   }
 };
+
+
+
+
+
+// Configure the OSS client
+const client = new OSS({
+  region: "oss-ap-southeast-1", // Replace with your OSS region
+  accessKeyId: 'LTAI5t73fHKeEdmzohV6wbtt', // AccessKey ID from .env
+  accessKeySecret: 'ZYqVnAOaOZvd8qrFdtsDqSfHd2ANUv', // AccessKey Secret from .env
+  bucket: 'healbitesv1', // Replace with your bucket name
+});
+
+export async function uploadToOSS(formData) {
+  try {
+    const file = formData.get('file'); // Get the uploaded file
+
+    if (!file) {
+      throw new Error('No file uploaded.');
+    }
+
+    // Generate a unique file name
+    const fileName = `${uuidv4()}-${file.name}`;
+
+    // Convert the file to a Buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // Upload the file to OSS
+    const result = await client.put(fileName, buffer);
+
+    // Return the OSS URL
+    return { success: true, url: result.url };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+}
