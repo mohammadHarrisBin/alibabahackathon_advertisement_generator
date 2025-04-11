@@ -56,7 +56,7 @@ export default function NutritionCard({ analysis, setJournalData }) {
           Nutrition Analysis
           <button
           onClick={()=>setJournalData((prev)=>[...prev, analysis])}
-          className='flex absolute right-2 top-6 text-blue-600 ml-20 p-2'>
+          className='flex absolute right-2 top-2 text-blue-600 ml-20 p-2'>
           <BookCheck size={20}/> 
           <span className='text-sm ml-2 cursor-pointer'>Save to journal</span>
           {/* Save to jounal */}
