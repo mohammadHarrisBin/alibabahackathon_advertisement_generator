@@ -122,7 +122,7 @@ function Page() {
               setJournalData={setJournalData}
             />
 
-            {/* <FoodPromptBox onRegenerate={handleAnalysis}/> */}
+            <FoodPromptBox onRegenerate={handleAnalysis}/>
           </>
         ) : imageUrl ? (
           <button
